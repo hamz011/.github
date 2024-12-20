@@ -1,30 +1,30 @@
-name: Generate Snake Game from GitHub Contributions
+name: Generate snake animation
 
 on:
   push:
     branches:
-      - main  # Ana dalınız
-  schedule:
-    - cron: '0 0 * * *'  # Her gün bir kez çalıştırmak için
+      - main  # Ana dalda tetiklenmesi için
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Generate Snake Animation
         uses: Platane/snk/svg-only@v3
         with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            dist/snake.svg?palette=github-dark&color_snake=blue
+          github_user_name: hamz011  # GitHub kullanıcı adınızı yazın
+          outputs: dist/snake.svg?palette=github-dark  # Renk paleti ve dosya yolu
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./dist  # Yılan animasyonunun bulunduğu dizin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Upload Snake Animation
-        uses: actions/upload-artifact@v3
-        with:
-          name: snake-animation
-          path: dist/snake.svg
